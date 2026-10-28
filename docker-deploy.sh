@@ -1,10 +1,11 @@
 #!/bin/bash
 
-version=production
-env="production"
+# Stop and remove any existing container running the old version
+docker stop busapp-prod || true
+docker rm busapp-prod || true
 
-if sudo docker ps -a --format '{{.Names}}' | grep "${env}"
-then
-sudo docker stop ${env} && sudo docker rm ${env}
-fi
-sudo docker run -it -d -p 9000:8001 --name ${env} kiruthigakanagaraj/busapp:${version}
+# Pull the latest image from Docker Hub (optional, since it was just built locally)
+docker pull kiruthigakanagaraj/busapp:production
+
+# Run the new container
+docker run -d --name busapp-prod -p 80:80 kiruthigakanagaraj/busapp:production
